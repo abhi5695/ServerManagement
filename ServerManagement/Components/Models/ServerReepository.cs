@@ -55,7 +55,7 @@ namespace ServerManagement.Components.Models
         {
             if (serverId != server.ServerId) return;
 
-            var serverToUpdate = GetServerById(serverId);
+            var serverToUpdate = servers.FirstOrDefault(s => s.ServerId == serverId);
             if (serverToUpdate != null)
             {
                 serverToUpdate.Name = server.Name;
@@ -66,7 +66,7 @@ namespace ServerManagement.Components.Models
         }
         public static void DeleteServer(int serverId)
         {
-            var server = GetServerById(serverId);
+            var server = servers.FirstOrDefault(s => s.ServerId == serverId);
             if (server != null)
             {
                 servers.Remove(server);

@@ -10,6 +10,6 @@
             "Delhi",
             "Kochi"
         };
-        public static List<string> GetCities() => cities;
+        public static List<string> GetCities() => cities.OrderBy(s => s).ToList();
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace ServerManagement.Components.Models
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace ServerManagement.Components.Models
 {
     public class Server
     {
@@ -9,7 +12,9 @@
             IsOnline = randomNumber == 0 ? false : true;
         }
         public int ServerId { get; set; }
+        [Required]
         public string? Name { get; set; }
+        [Required]
         public string? City { get; set; }
         public bool IsOnline { get; set; }
     }

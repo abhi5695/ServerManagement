@@ -1,0 +1,77 @@
+﻿@page "/servers/{id:int}"
+
+@inject NavigationManager navigationManager
+
+<h3>Edit Server</h3>
+<br />
+<br />
+
+@if (server != null)
+{
+    <EditForm Model="server" FormName="formServer" OnValidSubmit="Submit">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary></ValidationSummary>
+
+        <InputNumber @bind-Value="server.ServerId" hidden></InputNumber>
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">Name</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="server.Name" class="form-control"></InputText>
+            </div>
+            <div class="col">
+                <ValidationMessage for="()=>server.Name"></ValidationMessage>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">City</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="server.City" class="form-control"></InputText>
+            </div>
+            <div class="col">
+                <ValidationMessage for="() => server.City"></ValidationMessage>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">Is Online?</label>
+            </div>
+            <div class="col-6">
+                <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox>
+            </div>
+        </div>
+        <br />
+        <a href="/servers" class="btn-link">Go Back</a>
+        &nbsp;
+        <button class="btn btn-primary" type="submit">Update</button>
+    </EditForm>    
+}
+else
+{
+    <p>Loading server details...</p>
+}
+
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Server? server{ get; set; }
+
+    override protected void OnParametersSet()
+    {
+        server ??= ServerReepository.GetServerById(Id ?? 0);
+    }
+    private async Task Submit()
+    {
+        if (server != null)
+        {
+            ServerReepository.UpdateServer(server.ServerId, server);
+        }
+        navigationManager.NavigateTo("/servers");
+    }
+}
