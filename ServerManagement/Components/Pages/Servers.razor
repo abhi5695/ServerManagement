@@ -1,5 +1,7 @@
 ﻿@page "/servers"
 
+@inject NavigationManager navigationManager
+
 <h3>Servers</h3>
 <br />
 <br />
@@ -19,32 +21,62 @@
     </div>    
 </div>
 <br />
-<div>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Server Name</th>
-                <th>City</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (Server server in servers)
-            {
+<a href="/servers/add" class="btn btn-success mb-3">Add New Server</a>
+<br />
+@if (servers != null)
+{
+    <div>
+        <table class="table table-striped table-hover">
+            <thead>
                 <tr>
-                    <td>@server.Name</td>
-                    <td>@server.City</td>
-                    <td><span style="color:@((server.IsOnline ? "green" : "red"))">@(server.IsOnline ? "Online" : "Offline")</span></td>
-                    <td><a href="/servers/@(server.ServerId)" class="btn-link">Edit</a></td>
+                    <th>Server Name</th>
+                    <th>City</th>
+                    <th>Status</th>
+                    <th>Action</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (Server server in servers)
+                {
+                    <tr>
+                        <td>@server.Name</td>
+                        <td>@server.City</td>
+                        <td><span style="color:@((server.IsOnline ? "green" : "red"))">@(server.IsOnline ? "Online" : "Offline")</span></td>
+                        <td>
+                            <a href="/servers/@(server.ServerId)" class="btn btn-link">Edit</a>
+                            <EditForm Model="server"
+                                      FormName="@($"form-server-{server.ServerId}")"
+                                      OnValidSubmit="@(() => {DeleteServer(server.ServerId);})">
+                                <button type="submit" class="btn btn-link">Delete</button>
+                            </EditForm>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p><em>Loading...</em></p>
+}
 
 
 @code {
     private List<Server> servers = ServerReepository.GetServers();
     private List<string> cities = CitiesRepository.GetCities();
+
+    private void GetServersByCity(string city)
+    {
+        servers = ServerReepository.GetServersByCity(city);
+    }
+
+    public async Task DeleteServer(int serverId)
+    {
+        if(serverId != 0)
+        {
+            ServerReepository.DeleteServer(serverId);
+            navigationManager.Refresh();
+        }
+    }
 }
