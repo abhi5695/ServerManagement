@@ -2,6 +2,7 @@
 
 @inject NavigationManager navigationManager
 
+
 <h3>Servers</h3>
 <br />
 <br />
@@ -22,6 +23,7 @@
 </div>
 <br />
 <a href="/servers/add" class="btn btn-success mb-3">Add New Server</a>
+<ServerComponent @rendermode="InteractiveServer"></ServerComponent>
 <br />
 @if (servers != null)
 {
@@ -60,6 +62,7 @@ else
 {
     <p><em>Loading...</em></p>
 }
+
 
 
 @code {
