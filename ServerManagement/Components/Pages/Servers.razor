@@ -10,7 +10,7 @@
 <div class="container-fluid text-center">
     <div class="row w-100">
         <div class="col">
-            <div class="card" @onclick="GetServers">
+            <div class="card @(this.selectedCity.Equals(String.Empty,StringComparison.OrdinalIgnoreCase)?"border-dark border-5":"")" @onclick="@(() => { SelectCity(String.Empty); })">
                 <img src="@($"/images/City.png")" class="card-img-top img-thumbnail">
                 <div class="card-body">
                     All Cities
@@ -20,7 +20,7 @@
         @foreach (var city in cities)
         {
             <div class="col">
-                <div class="card" @onclick="@(() => { GetServersByCity(city); })">
+                <div class="card @(this.selectedCity.Equals(city, StringComparison.OrdinalIgnoreCase) ? "border-dark border-5" : "")" @onclick="@(() => { SelectCity(city); })">
                     <img src="@($"/images/{city}.png")" class="card-img-top img-thumbnail">
                     <div class="card-body">
                         @city
@@ -34,6 +34,14 @@
 <a href="/servers/add" class="btn btn-success mb-3">Add New Server</a>
 <ServerComponent @rendermode="InteractiveServer"></ServerComponent>
 <br />
+<div class="row">
+    <div class="col-6 ms-auto">
+        <div class="input-group mb-1">
+            <input type="text" class="form-control" placeholder="Search Servers" @bind-value="serverFilter" />
+            <button class="btn btn-secondary" type="button" id="button-search" @onclick="HandleSearchClick">Search</button>
+        </div>
+    </div>
+</div>
 @if (servers != null)
 {
     <div class="row w-100">
@@ -47,9 +55,8 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (Server server in servers)
-                {
-                    <tr>
+                <Virtualize Items="this.servers" Context="server">
+                    <tr @key="server.ServerId">
                         <td>@server.Name</td>
                         <td>@server.City</td>
                         <td><span style="color:@((server.IsOnline ? "green" : "red"))">@(server.IsOnline ? "Online" : "Offline")</span></td>
@@ -62,7 +69,7 @@
                             </EditForm>
                         </td>
                     </tr>
-                }
+                </Virtualize>
             </tbody>
         </table>
     </div>
@@ -72,22 +79,38 @@ else
     <p><em>Loading...</em></p>
 }
 
-
-
 @code {
     private List<Server> servers = ServerReepository.GetServers();
     private List<string> cities = CitiesRepository.GetCities();
+    private string selectedCity = String.Empty;
 
-    private void GetServers()
-    {
-        servers = ServerReepository.GetServers();
+    private string _serverFilter = String.Empty;
+    private string serverFilter { get => _serverFilter;
+        set
+        {
+            _serverFilter = value;
+        }
     }
 
-    private void GetServersByCity(string city)
+    private void SelectCity(string city)
     {
-        servers = ServerReepository.GetServersByCity(city);
+        selectedCity = city;
+        if (!String.IsNullOrEmpty(selectedCity))
+        {
+            if (selectedCity == "Bangalore")
+            {
+                for (int i = 16; i <= 2000; i++)
+                {
+                    ServerReepository.AddServer(new Server { Name = $"Server{i}", City = "Bangalore", IsOnline = true });
+                }
+            }
+            servers = ServerReepository.GetServersByCity(selectedCity);
+        }
+        else
+        {
+            servers = ServerReepository.GetServers();
+        }
     }
-
     public async Task DeleteServer(int serverId)
     {
         if(serverId != 0)
@@ -95,5 +118,10 @@ else
             ServerReepository.DeleteServer(serverId);
             navigationManager.Refresh();
         }
+    }
+    private void HandleSearchClick()
+    {
+        servers = ServerReepository.SearchServers(serverFilter);
+        selectedCity = String.Empty;
     }
 }

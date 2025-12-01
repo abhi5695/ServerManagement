@@ -1,10 +1,12 @@
 ﻿@page "/servers/add"
 
+@rendermode InteractiveServer
+
 @inject NavigationManager navigationManager
 
 <h3>Add Server</h3>
 <br />
-<EditForm Model="server" FormName="formServer" OnValidSubmit="Submit">
+<EditForm Model="server" OnValidSubmit="Submit">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
 
@@ -45,7 +47,6 @@
 </EditForm>
 
 @code {
-    [SupplyParameterFromForm]
     private Server server { get; set; } = new Server() { IsOnline = false };
 
     private async Task Submit()
