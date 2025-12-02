@@ -8,11 +8,17 @@
 <br />
 <CityListComponent @ref="cityListComponent" SelectCityCallback="HandleCitySelectionCallback"></CityListComponent>
 <br />
-<a href="/servers/add" class="btn btn-success mb-3">Add New Server</a>
+<div class="row">
+    <div class="col text-start">
+        <a href="/servers/add" class="btn btn-success mb-3">Add New Server</a>
+    </div>
+</div>
 <br />
 <ServerSearchComponent @ref="serverSearchComponent" SearchServerFilterCallback="HandleSearchFilterCallback"></ServerSearchComponent>
 
-<ServerListComponent CityName="@selectedCity" SearchFilter="@serverFilter"></ServerListComponent>
+<CascadingValue Name="SelectedCity" Value="@selectedCity">
+    <ServerListComponent CityName="@selectedCity" SearchFilter="@serverFilter"></ServerListComponent>
+</CascadingValue>
 
 @code {
     private string selectedCity = String.Empty;
@@ -28,12 +34,13 @@
         {
             this.selectedCity = String.Empty;
         }
-        serverSearchComponent.ClearSearchText();
+        serverSearchComponent?.ClearSearchText();
         serverFilter = String.Empty;
     }
     private void HandleSearchFilterCallback(string serverFilter)
     {
         this.serverFilter = serverFilter;
-        cityListComponent.ClearSelectedCity();
+        cityListComponent?.ClearSelectedCity();
+        this.selectedCity = String.Empty;
     }
 }

@@ -2,11 +2,24 @@
 
 @if(this.Server != null && this.Server.ServerId != null)
 {
-    <tr @key=@this.Server.ServerId>
+    <tr @key=@this.Server.ServerId style="background-color:@GetBackgroudColor(SelectedCity)">
         <td hidden>@this.Server.ServerId</td>
         <td>@this.Server.Name</td>
         <td>@this.Server.City</td>
-        <td style="color:@(this.Server.IsOnline ? "green" : "red")">@(this.Server.IsOnline ? "Online" : "Offline")</td>
+        <td style="color:@(this.Server.IsOnline ? "green" : "red")">
+            @(this.Server.IsOnline ? "Online" : "Offline")
+            &nbsp;
+            @if (this.Server.IsOnline)
+            {
+                <button type="button" class="btn btn-outline-danger" @onclick="@(()=>{this.Server.IsOnline = !this.Server.IsOnline; })">Turn Off</button>
+                <text>&nbsp;</text>
+                @GenerateRandomNumber()<text> people are online.</text>
+            }
+            else
+            {
+                <button type="button" class="btn btn-outline-success" @onclick="@(() => { this.Server.IsOnline = !this.Server.IsOnline; })">Turn On</button>
+            }
+        </td>
         <td>
             <a href="/servers/@this.Server.ServerId" class="btn btn-primary btn-sm">Edit</a>
             &nbsp;
@@ -18,6 +31,10 @@
 @code {
     [Parameter]
     public Server? Server { get; set; }
+    private int randomNumber;
+
+    [CascadingParameter(Name ="SelectedCity")]
+    public string? SelectedCity { get; set; }
 
     public async Task DeleteServer(int serverId)
     {
@@ -26,6 +43,24 @@
             ServerReepository.DeleteServer(serverId);
             navigationManager.Refresh();
             // navigationManager.NavigateTo("/servers");
+        }
+    }
+    private int GenerateRandomNumber()
+    {
+        Random random = new Random();
+        randomNumber = random.Next(0, 50);
+        return randomNumber;
+    }
+    private string GetBackgroudColor (string cityName)
+    {
+        switch (cityName)
+        {
+            case "Bangalore": return "#FCEFC5";
+            case "Chennai": return "#C5EDFC";
+            case "Kochi": return "#FCC5D1";
+            case "Delhi": return "#D5FCC5";
+            case "Mumbai": return "#E2C5FC";
+            default: return "#E8E8E8";
         }
     }
 }
