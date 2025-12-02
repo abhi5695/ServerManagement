@@ -1,0 +1,33 @@
+﻿<div class="row">
+    <div class="col-6 ms-auto">
+        <div class="input-group mb-1">
+            <input type="text" class="form-control" placeholder="Search Servers" @bind-value="serverFilter" />
+            <button class="btn btn-secondary" type="button" id="button-search" @onclick="HandleSearchClick">Search</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback<string> SearchServerFilterCallback { get; set; }
+
+    private string _serverFilter = String.Empty;
+    private string serverFilter
+    {
+        get => _serverFilter;
+        set
+        {
+            _serverFilter = value;
+        }
+    }
+    public void ClearSearchText()
+    {
+        serverFilter = String.Empty;
+    }
+
+    private void HandleSearchClick()
+    {
+        SearchServerFilterCallback.InvokeAsync(serverFilter);
+    }
+
+}

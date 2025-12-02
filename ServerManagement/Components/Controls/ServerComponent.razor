@@ -1,19 +1,31 @@
-﻿@if (server != null)
+﻿@inject NavigationManager navigationManager
+
+@if(this.Server != null && this.Server.ServerId != null)
 {
-    <div style="@($"color:{(server.IsOnline ? "green" : "red")}")">
-        @server.Name in @server.City is @(server.IsOnline ? "Online" : "Offline")
-        &nbsp;
-        <button type="button" class="btn btn-primary" @onclick="ChangeStatus">Turn On/Off</button>
-    </div>
+    <tr @key=@this.Server.ServerId>
+        <td hidden>@this.Server.ServerId</td>
+        <td>@this.Server.Name</td>
+        <td>@this.Server.City</td>
+        <td style="color:@(this.Server.IsOnline ? "green" : "red")">@(this.Server.IsOnline ? "Online" : "Offline")</td>
+        <td>
+            <a href="/servers/@this.Server.ServerId" class="btn btn-primary btn-sm">Edit</a>
+            &nbsp;
+            <button class="btn btn-danger btn-sm" @onclick="() => DeleteServer(this.Server.ServerId)">Delete</button>
+        </td>
+    </tr>
 }
 
 @code {
-    private Server? server { get; set; } = new Server { Name = "Server1", City = "Chennai" }; 
-    private void ChangeStatus()
+    [Parameter]
+    public Server? Server { get; set; }
+
+    public async Task DeleteServer(int serverId)
+    {
+        if (serverId != 0)
         {
-        if (server != null)
-        {
-            server.IsOnline = !server.IsOnline;
+            ServerReepository.DeleteServer(serverId);
+            navigationManager.Refresh();
+            // navigationManager.NavigateTo("/servers");
         }
     }
 }

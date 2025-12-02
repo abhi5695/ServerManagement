@@ -1,0 +1,61 @@
+﻿@inject NavigationManager navigationManager
+
+@if(this.servers != null && this.servers.Count > 0)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>City</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Virtualize Items="servers" Context="server">
+                <ServerComponent Server="@server"></ServerComponent>
+            </Virtualize>
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No servers available.</p>
+}
+
+@code {
+    [Parameter]
+    public string? CityName { get; set; }
+    [Parameter]
+    public string? SearchFilter { get; set; } = String.Empty;
+
+    private List<Server> servers;
+
+    protected override void OnParametersSet()
+    {
+        if (!String.IsNullOrEmpty(SearchFilter))
+        {
+            servers = ServerReepository.SearchServers(SearchFilter);
+        }
+        else
+        {
+            if (!String.IsNullOrEmpty(CityName))
+            {
+                if (CityName == "Bangalore")
+                {
+                    for (int i = 16; i <= 2000; i++)
+                    {
+                        ServerReepository.AddServer(new Server { Name = $"Server{i}", City = "Bangalore", IsOnline = true });
+                    }
+                }
+                servers = ServerReepository.GetServersByCity(CityName);
+            }
+            else
+            {
+                servers = ServerReepository.GetServers();
+            }
+        }
+    }
+
+    
+}
