@@ -1,0 +1,32 @@
+﻿@page "/quickgrid"
+@using Microsoft.AspNetCore.Components.QuickGrid
+
+<h3>Quick Grid Demo</h3>
+<br />
+
+@if(servers != null)
+{
+    <QuickGrid Items="servers.AsQueryable()">
+        <PropertyColumn Property="s=>s.Name"></PropertyColumn>
+        <PropertyColumn Property="s=>s.City"></PropertyColumn>
+        <TemplateColumn title="Status">
+            @if (context.IsOnline)
+            {
+                <div style="color:green">
+                    Online
+                </div>
+            }
+            else
+            {
+                <div style="color:red">
+                    Offline
+                </div>
+            }
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private List<Server>? servers = ServerReepository.GetServers();
+
+}

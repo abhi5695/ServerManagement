@@ -10,7 +10,7 @@
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
 
-    <div class="row mb-3 input-text-width">
+    @* <div class="row mb-3 input-text-width">
         <div class="col-2">
             <label class="col-form-label">Name</label>
         </div>
@@ -20,26 +20,28 @@
         <div class="col">
             <ValidationMessage for="() => server.Name"></ValidationMessage>
         </div>
-    </div>
-    <div class="row mb-3 input-text-width">
-        <div class="col-2">
-            <label class="col-form-label">City</label>
-        </div>
-        <div class="col-6">
+    </div> *@
+    <FieldComponent Label="Name">
+        <Control>
+            <InputText @bind-Value="server.Name" class="form-control"></InputText>
+        </Control>
+        <ValidationControl>
+            <ValidationMessage for="() => server.Name"></ValidationMessage>
+        </ValidationControl>
+    </FieldComponent>
+    <FieldComponent Label="City">
+        <Control>
             <InputText @bind-Value="server.City" class="form-control"></InputText>
-        </div>
-        <div class="col">
+        </Control>
+        <ValidationControl>
             <ValidationMessage for="() => server.City"></ValidationMessage>
-        </div>
-    </div>
-    <div class="row mb-3 input-text-width">
-        <div class="col-2">
-            <label class="col-form-label">Is Online?</label>
-        </div>
-        <div class="col-6">
+        </ValidationControl>
+    </FieldComponent>
+    <FieldComponent Label="Is Online?">
+        <Control>
             <InputCheckbox @bind-Value="server.IsOnline" class="form-check-input"></InputCheckbox>
-        </div>
-    </div>
+        </Control>
+    </FieldComponent>
     <br />
     <a href="/servers" class="btn-link">Go Back</a>
     &nbsp;

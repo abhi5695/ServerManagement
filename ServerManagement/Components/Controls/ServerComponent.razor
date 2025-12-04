@@ -2,7 +2,8 @@
 
 @if(this.Server != null && this.Server.ServerId != null)
 {
-    <tr @key=@this.Server.ServerId style="background-color:@GetBackgroudColor(SelectedCity)">
+    @* <tr @key=@this.Server.ServerId style="background-color:@GetBackgroudColor(SelectedCity)"> *@
+    <tr @key="@this.Server.ServerId">
         <td hidden>@this.Server.ServerId</td>
         <td>@this.Server.Name</td>
         <td>@this.Server.City</td>
@@ -11,9 +12,7 @@
             &nbsp;
             @if (this.Server.IsOnline)
             {
-                <button type="button" class="btn btn-outline-danger" @onclick="@(()=>{this.Server.IsOnline = !this.Server.IsOnline; })">Turn Off</button>
-                <text>&nbsp;</text>
-                @GenerateRandomNumber()<text> people are online.</text>
+                <button type="button" class="btn btn-outline-danger" @onclick="@(()=>{this.Server.IsOnline = !this.Server.IsOnline; })">Turn Off</button>                
             }
             else
             {
@@ -21,9 +20,26 @@
             }
         </td>
         <td>
-            <a href="/servers/@this.Server.ServerId" class="btn btn-primary btn-sm">Edit</a>
-            &nbsp;
-            <button class="btn btn-danger btn-sm" @onclick="() => DeleteServer(this.Server.ServerId)">Delete</button>
+            @if (Server.IsOnline)
+            {
+                <text>@GenerateRandomNumber()</text>
+            }
+            else
+            {
+                <text>N/A</text>
+            }
+        </td>
+        <td>
+            @* <a href="/servers/@this.Server.ServerId" class="btn btn-primary btn-sm">Edit</a> *@
+            <button class="btn btn-primary btn-sm" style="color:blue" type="button" @onclick="@(() => { navigationManager.NavigateTo($"/servers/{Server.ServerId}"); })">Edit</button>
+        </td>
+        <td>
+            <EditForm 
+                Model="Server" F
+                ormName="@($"form-Server-{Server.ServerId}")" 
+                OnValidSubmit="@(() => { DeleteServer(Server.ServerId); })">
+                <button class="btn btn-danger btn-sm" type="submit">Delete</button>
+            </EditForm>
         </td>
     </tr>
 }
@@ -36,13 +52,13 @@
     [CascadingParameter(Name ="SelectedCity")]
     public string? SelectedCity { get; set; }
 
-    public async Task DeleteServer(int serverId)
+    public void DeleteServer(int serverId)
     {
         if (serverId != 0)
         {
             ServerReepository.DeleteServer(serverId);
-            navigationManager.Refresh();
-            // navigationManager.NavigateTo("/servers");
+            // navigationManager.Refresh();
+            navigationManager.NavigateTo("/servers");
         }
     }
     private int GenerateRandomNumber()
@@ -51,16 +67,16 @@
         randomNumber = random.Next(0, 50);
         return randomNumber;
     }
-    private string GetBackgroudColor (string cityName)
-    {
-        switch (cityName)
-        {
-            case "Bangalore": return "#FCEFC5";
-            case "Chennai": return "#C5EDFC";
-            case "Kochi": return "#FCC5D1";
-            case "Delhi": return "#D5FCC5";
-            case "Mumbai": return "#E2C5FC";
-            default: return "#E8E8E8";
-        }
-    }
+    // private string GetBackgroudColor (string cityName)
+    // {
+    //     switch (cityName)
+    //     {
+    //         case "Bangalore": return "#FCEFC5";
+    //         case "Chennai": return "#C5EDFC";
+    //         case "Kochi": return "#FCC5D1";
+    //         case "Delhi": return "#D5FCC5";
+    //         case "Mumbai": return "#E2C5FC";
+    //         default: return "#E8E8E8";
+    //     }
+    // }
 }
